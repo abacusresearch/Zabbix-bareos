@@ -25,9 +25,15 @@ def create_console():
 
 
 def last_status(args):
-    console = create_console()
-    last_job = console.call('llist job="{}" last'.format(args.job))
-    print((last_job["jobs"][0]["jobstatus"]))
+    with open('/tmp/bareos.job.py.log', 'a', encoding="utf-8") as logf:
+        logf.write("==== %s ====\n" % datetime.datetime.today().ctime())
+        logf.write("  job %s\n" % args.job)
+        console = create_console()
+        logf.write("  console: %s\n" % "OK" if console is not None else "ERR")
+        last_job = console.call('llist job="{}" last'.format(args.job))
+        logf.write("  last_job: %s\n" % "OK" if last_job is not None else "ERR")
+        logf.write("  jobstatus [%s]\n" % last_job["jobs"][0]["jobstatus"])
+        print((last_job["jobs"][0]["jobstatus"]))
 
 
 def last_size(args):
