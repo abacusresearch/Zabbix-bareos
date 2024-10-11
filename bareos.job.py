@@ -7,8 +7,6 @@ import datetime
 import re
 import yaml
 
-sys.stderr = open('/tmp/bareos.job.py.err.log','a')
-
 configfile = '/etc/zabbix/zabbix_bareos.yml'
 
 with open(configfile, 'r') as ymlfile:
@@ -20,27 +18,15 @@ host = config.get('host', "localhost")
 port = config.get('port', 9101)
 
 def create_console():
-    with open('/tmp/bareos.job.py.console.log', 'a', encoding="utf-8") as logf:
-        logf.write("==== %s ====\n" % datetime.datetime.today().ctime())
     console = bareos.bsock.DirectorConsoleJson(
         address=host, port=port, name=user, password=password
     )
-    with open('/tmp/bareos.job.py.console.log', 'a', encoding="utf-8") as logf:
-        logf.write("  console: %s\n" % "OK" if console is not None else "ERR")
     return console
 
 
 def last_status(args):
-    with open('/tmp/bareos.job.py.log', 'a', encoding="utf-8") as logf:
-        logf.write("==== %s ====\n" % datetime.datetime.today().ctime())
-        logf.write("  job %s\n" % args.job)
     console = create_console()
-    with open('/tmp/bareos.job.py.log', 'a', encoding="utf-8") as logf:
-        logf.write("  console: %s\n" % "OK" if console is not None else "ERR")
     last_job = console.call('llist job="{}" last'.format(args.job))
-    with open('/tmp/bareos.job.py.log', 'a', encoding="utf-8") as logf:
-        logf.write("  last_job: %s\n" % "OK" if last_job is not None else "ERR")
-        logf.write("  jobstatus [%s]\n" % last_job["jobs"][0]["jobstatus"])
     print((last_job["jobs"][0]["jobstatus"]))
 
 
