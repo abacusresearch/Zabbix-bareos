@@ -25,13 +25,8 @@ def create_console():
 
 
 def last_status(args):
-    sys.stderr = open('/tmp/bareos.job.py.err.%s.%s.log' % ( datetime.datetime.today().strftime('%Y%m%d-%H%M%S'), args.job ),'a')
-    print("==== running last status for job %s" % args.job, file=sys.stderr)
     console = create_console()
-    print("==== console: %s" % "OK" if console is not None else "ERR", file=sys.stderr)
     last_job = console.call('llist job="{}" last'.format(args.job))
-    print("==== last job: %s" % "OK" if last_job is not None else "ERR", file=sys.stderr)
-    print("==== last job status: [%s]" % last_job["jobs"][0]["jobstatus"], file=sys.stderr)
     print((last_job["jobs"][0]["jobstatus"]))
 
 
